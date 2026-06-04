@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "defaultLibraryNamespace": "@app",
+  "defaultLibraryPrefix": "@app",
+  "projects": {
+    "rescheduling": {
+      "type": "library",
+      "root": "libs/rescheduling",
+      "entryFile": "index",
+      "sourceRoot": "libs/rescheduling/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/rescheduling/tsconfig.lib.json"
+      }
+    }
+  }
+}

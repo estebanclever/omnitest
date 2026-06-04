@@ -1,0 +1,43 @@
+# Dependencias
+node_modules/
+.pnp
+.pnp.js
+
+# Builds compilados
+dist/
+build/
+.next/
+out/
+
+# Base de datos SQLite (volumen Docker, no se sube)
+data/
+*.db
+*.sqlite
+
+# Variables de entorno locales
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Coverage de tests
+coverage/
+
+# Docker volumes (no se suben)
+directus-db/

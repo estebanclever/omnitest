@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  directus:
+    image: directus/directus:10.12.0
+    container_name: omnitest-directus
+    ports:
+      - "8055:8055"
+    volumes:
+      - directus-db:/directus/database
+      - ./data/directus/uploads:/directus/uploads
+    environment:
+      KEY: "omnitest-secret-key-super-secret"
+      SECRET: "omnitest-secret-pass-phrase"
+      DB_CLIENT: "sqlite3"
+      DB_FILENAME: "/directus/database/data.db"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "password"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "true"
+      CORS_METHODS: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      CORS_ALLOWED_HEADERS: "Content-Type,Authorization"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8055/server/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    container_name: omnitest-backend
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      DIRECTUS_URL: "http://directus:8055"
+      DIRECTUS_ADMIN_EMAIL: "admin@example.com"
+      DIRECTUS_ADMIN_PASSWORD: "password"
+    depends_on:
+      directus:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+    container_name: omnitest-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: "http://localhost:3001"
+      NEXT_PUBLIC_DIRECTUS_URL: "http://localhost:8055"
+    depends_on:
+      - backend
+
+  bootstrap:
+    build:
+      context: .
+      dockerfile: ./packages/bootstrap/Dockerfile
+    container_name: omnitest-bootstrap
+    environment:
+      DIRECTUS_URL: "http://directus:8055"
+      DIRECTUS_ADMIN_EMAIL: "admin@example.com"
+      DIRECTUS_ADMIN_PASSWORD: "password"
+    depends_on:
+      directus:
+        condition: service_healthy
+
+volumes:
+  directus-db:
